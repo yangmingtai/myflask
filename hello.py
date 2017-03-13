@@ -2,8 +2,19 @@
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
-from datetime import datetime
+# from datetime import datetime
 from flask import Flask, render_template
+
+from flask.ext.wtf import Form
+from wtforms import StringField, SubmitField
+from wtforms.validators import Required
+
+
+class NameForm(Form):
+    name = StringField('What is your name?', validators=[Required()])
+    submit = SubmitField('Submit')
+
+
 app = Flask(__name__)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
@@ -11,9 +22,14 @@ moment = Moment(app)
 app.config['SECRET_KEY'] = 'ymt origin csuft comeon'
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html', current_time=datetime.utcnow())
+    name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.date = ''
+    return render_template('index.html', form=form, name=name)
 
 
 @app.route('/user/<name>')
