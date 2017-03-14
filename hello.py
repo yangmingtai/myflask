@@ -3,7 +3,7 @@ from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 # from datetime import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField
@@ -24,12 +24,11 @@ app.config['SECRET_KEY'] = 'ymt origin csuft comeon'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    name = None
     form = NameForm()
     if form.validate_on_submit():
-        name = form.name.data
-        form.name.date = ''
-    return render_template('index.html', form=form, name=name)
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form, name=session.get('name'))
 
 
 @app.route('/user/<name>')
