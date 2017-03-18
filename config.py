@@ -15,6 +15,7 @@ class Config:
     FLASKY_MAIL_SUBJECT_PREFIX = '[Origin]'
     FLASKY_MAIL_SENDER = 'Origin Admin <15575159757@163.com>'
     FLASKY_ADMIN = '15575159757@163.com'
+    BABEL_DEFAULT_LOCALE = 'zh_Hans_CN'
 
     @staticmethod
     def init_app(app):

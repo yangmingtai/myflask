@@ -1,16 +1,19 @@
 from . import db, login_manager
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-class Role(db.Model):
-    __tablename__ = 'roles'
+class Article(db.Model):
+    __tablename__ = 'articles'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    title = db.Column(db.String(128))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
-        return '<Role %r>' % self.name
+        return '<Article %r>' % self.name
 
 
 class User(UserMixin, db.Model):
@@ -18,8 +21,20 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+    # 星座
+    constellation = db.Column(db.String(12), default='未知')
+    # 加入日期
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    # 职业
+    job = db.Column(db.String(64), default='未知')
+    # 简介
+    introduce = db.Column(db.String(256), default='')
+    # 管理员权限
+    admin = db.Column(db.Boolean, default=False)
+    # 坐标/地区
+    location = db.Column(db.String(64), default='未知')
+    articles = db.relationship('Article', backref='author', lazy='dynamic')
 
     @property
     def password(self):

@@ -1,5 +1,6 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,\
+        TextAreaField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo
 from wtforms import ValidationError
 from ..models import User
@@ -32,3 +33,11 @@ class RegistrationForm(Form):
         def validate_username(self, field):
             if User.query.filter_by(username=field.data).first():
                 raise ValidationError('用户名已被使用.')
+
+
+class EditProfileForm(Form):
+    location = StringField('我的城市或任何地区', validators=[Length(0, 64)])
+    constellation = StringField('我的星座', validators=[Length(0, 64)])
+    job = StringField('我的身份或工作',  validators=[Length(0, 64)])
+    about_me = TextAreaField('我的一句话')
+    submit = SubmitField('提交')
