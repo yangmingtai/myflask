@@ -2,18 +2,33 @@ from . import db, login_manager
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from markdown import markdown
+import bleach
 
 
 class Article(db.Model):
     __tablename__ = 'articles'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     title = db.Column(db.String(128))
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return '<Article %r>' % self.name
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'h4', 'p', 'br']
+        target.body_html = bleach.linkify(
+            bleach.clean(markdown(
+                value, out_format='html'), tags=allowed_tags, strip=True))
+
+
+db.event.listen(Article.body, 'set', Article.on_changed_body)
 
 
 class User(UserMixin, db.Model):

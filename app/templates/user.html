@@ -4,7 +4,7 @@
 {% block title %}Origin - {{ user.username }}{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
+<div class="page-header col-md-8 col-md-offset-2">
     <h1>{{ user.username }}</h1>
     <p>职业: {{ user.job }}</p>
     <p>星座: {{ user.constellation }}</p>
@@ -17,5 +17,34 @@
 			编辑
 		</a>
 		{% endif %}
+</div>
+<div class="posts">
+    {% for article in articles %}
+    <div class="post" style="border-color:#000">
+        <div class="profile-thumbnail col-md-8 col-md-offset-2">
+            <a href="{{ url_for('.user', username=article.author.username) }}">
+                <img class="img-circle profile-thumbnail"
+                 src="/static/favicon.ico" height="40" width="40">
+            </a>    
+            <a href="{{ url_for('.user', username=article.author.username) }}">
+                {{ article.author.username }}
+            </a>
+            <div class="post-date">
+                <h3><a href="/">{{ article.title}}</a>
+                    <small>{{ moment(article.timestamp).fromNow() }}</small>
+                </h3>
+            </div>
+        </div>
+            <div class="post-body col-md-8 col-md-offset-2">{{ article.body }}</div>
+            <div class="post-footer col-md-8 col-md-offset-2">
+                {% if current_user == article.author %}
+                <a href="{{ url_for('.edit', id=article.id) }}">
+                    <span class="label label-primary">编辑</span>
+                </a>
+                {% endif %}
+            </div>
+            <hr class="col-md-7 col-md-offset-2" style="height:1px;border:none;border-top:1px solid #d0d0d0;" />
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

@@ -1,21 +1,6 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "_macros.html" as macros%}
-
-{% block title %}Origin{% endblock %}
-
+{% block title %}Origin - 原文{% endblock %}
 {% block page_content %}
-<div class="page-header col-md-8 col-md-offset-2">
-	{% if current_user.is_authenticated %}
-	<h1>{{ current_user.username }}<small> {{ current_user.introduce}}</small></h1>
-	{% else %}<h1>你好，Stranger!</h1>
-	{% endif %}
-</div>
-<div class="col-md-8 col-md-offset-2">
-	{% if current_user.is_authenticated %}
-	{{ wtf.quick_form(form) }}
-	{% endif %}
-</div>
 <div class="posts">
 	{% for article in articles %}
 	<div class="post">
@@ -28,7 +13,7 @@
 				{{ article.author.username }}
 			</a>
 			<div class="post-date">
-				<h3><a href="/article/{{ article.id }}">{{ article.title}}</a>
+				<h3><a href="/article/{{article.id}}">{{ article.title}}</a>
 					<small>{{ moment(article.timestamp).fromNow() }}</small>
 				</h3>
 			</div>
@@ -47,15 +32,7 @@
 				</a>
 				{% endif %}
 			</div>
-			<hr class="col-md-8 col-md-offset-2" style="height:1px;border:none;border-top:1px solid #d0d0d0;" />
 	</div>
 	{% endfor %}
 </div>
-<div class="pagination col-md-8 col-md-offset-2">
-	{{ macros.pagination_widget(pagination, '.index')}}
-</div>
-{% endblock %}
-{% block scripts %}
-{{ super() }}
-{{ pagedown.include_pagedown() }}
 {% endblock %}
